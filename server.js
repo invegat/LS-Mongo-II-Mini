@@ -1,7 +1,9 @@
+// / <reference types="mongodb" />
 
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const mongodb = require('mongodb');
 const Person = require('./models.js');
 
 const port = process.env.PORT || 3000;
@@ -80,6 +82,25 @@ server.get('/user-get-friends/:id', (res, req) => {
       req.status(STATUS_OK).json(person);
     }
   });
+});
+server.put('/users/:_id', (res, req) => {
+  const _id = res.params._id;
+  const { firstName, lastName } = res.query;
+  // console.log(`id: ${_id} firstName: ${firstName} lastName: ${lastName}`);
+  Person.update({ _id: mongodb.ObjectID(_id) },
+    {
+      firstName,
+      lastName
+    },
+    { multi: false },
+    (err, resp) => {
+      if (err) {
+        req.status(STATUS_USER_ERROR).json(`_id '${_id}' not found, ${err}`);
+        return;
+      }
+      req.status(STATUS_OK).json('1 row updated');
+    }
+  );
 });
 mongoose.Promise = global.Promise;
 const connect = mongoose.connect('mongodb://localhost/people', {
