@@ -13,6 +13,14 @@
   "dependencies": {
     "body-parser": "^1.17.2",
     "express": "^4.15.4",
-    "mongoose": "^4.11.7"
-  }
+    "mongoose": "^4.11.7",
+    "mongoose-type-email": "^1.0.5"
+  },
+  "devDependencies": {
+    "eslint": "^3.17.1",
+    "eslint-config-airbnb": "^14.1.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "4.0.0",
+    "eslint-plugin-react": "6.9.0"
+  }  
 }

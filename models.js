@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-
+require('mongoose-type-email');
 const PersonSchema = ({
     firstName: {
       type: String,
@@ -11,7 +11,7 @@ const PersonSchema = ({
       required: true,
     },
     email: {
-      type: String,
+      type: mongoose.SchemaTypes.Email,
       required: true,
       unique: true,
     },

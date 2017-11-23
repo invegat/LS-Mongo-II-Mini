@@ -1,3 +1,4 @@
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -11,10 +12,75 @@ const server = express();
 const STATUS_SERVER_ERROR = 500;
 const STATUS_USER_ERROR = 422;
 
+// non-error status code constants
+const STATUS_OK = 200;
+
 server.use(bodyParser.json());
 
 // Your API will be built out here.
+server.get('/users', (req, res) => {
+  Person.find({}, (err, people) => {
+    if (err) {
+      res.status(STATUS_SERVER_ERROR).json(err);
+    } else {
+      res.status(STATUS_OK).json(people);
+    }
+  });
+});
+server.get('/users/:direction', (req, res) => {
+  const direction = req.params.direction;
+  console.log('direction', direction);
+  let sort = 0;
+  switch (direction) {
+    case 'asc':
+      sort = 1;
+      break;
+    case 'desc':
+      sort = -1;
+      break;
+    default:
+      /* eslint-disable quotes */
+      res.status(STATUS_USER_ERROR).json(`direction must be 'asc' or 'desc'`);
+      return;
+  }
+  Person.find().sort({ firstName: sort }).exec((err, people) => {
+    if (err) {
+      console.log('err:', err);
+      res.status(STATUS_SERVER_ERROR).json('find or sort or exec failed');
+    } else {
+      return res.status(STATUS_OK).json(people);
+    }
+  });
 
+  /*
+
+  Person.find({}, (err, people) => {
+    if (err) {
+      res.status(STATUS_SERVER_ERROR).json(err);
+    } else {
+      res.status(STATUS_OK).json(people.sort({ firstName: 1 }, (sortErr, sortRes) => {
+        if (sortErr) {
+          console.log('sortErr:', sortErr);
+          res.status(STATUS_SERVER_ERROR).json('sort failed');
+        } else {
+          return sortRes;
+        }
+      }));
+    }
+  });
+  */
+});
+
+server.get('/user-get-friends/:id', (res, req) => {
+  const id = res.params.id;
+  Person.findById(id).exec((err, person) => {
+    if (err) {
+      req.status(STATUS_USER_ERROR).json(`id '${id}' not found`);
+    } else {
+      req.status(STATUS_OK).json(person);
+    }
+  });
+});
 mongoose.Promise = global.Promise;
 const connect = mongoose.connect('mongodb://localhost/people', {
   useMongoClient: true
@@ -25,7 +91,7 @@ connect.then(
     server.listen(port);
     console.log(`Server Listening on ${port}`);
   },
-  err => {
+  (err) => {
     console.log('\n************************');
     console.log("ERROR: Couldn't connect to MongoDB. Do you have it running?");
     console.log('************************\n');
