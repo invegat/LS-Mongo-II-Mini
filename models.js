@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
+
 const Schema = mongoose.Schema;
 require('mongoose-type-email');
+
 const PersonSchema = {
  // _id: String,
   firstName: {

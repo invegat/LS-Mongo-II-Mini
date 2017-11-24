@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const mongodb = require('mongodb');
 const Person = require('./models.js');
+const connectionString = require('./connection.js');
 
 const port = process.env.PORT || 3000;
 
@@ -103,7 +104,7 @@ server.put('/users/:_id', (res, req) => {
   );
 });
 mongoose.Promise = global.Promise;
-const connect = mongoose.connect('mongodb://localhost/people', {
+const connect = mongoose.connect(connectionString, {
   useMongoClient: true
 });
 /* eslint no-console: 0 */
@@ -118,3 +119,4 @@ connect.then(
     console.log('************************\n');
   }
 );
+
